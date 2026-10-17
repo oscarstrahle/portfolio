@@ -1,0 +1,159 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Five futures algorithms: build, test, trade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f8f9fb;--card:#fff;--ink:#0f172a;--mute:#64748b;--line:#e2e8f0;--ac:#2563eb;--ac2:#dbeafe;--neg:#dc2626;--serif:'Newsreader',Georgia,serif;--sans:'Inter',system-ui,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans)}
+.w{max-width:960px;margin:0 auto;padding:0 24px}
+nav{position:sticky;top:14px;z-index:9;display:flex;justify-content:center;padding:0 12px;pointer-events:none}
+nav .w{pointer-events:auto;display:flex;gap:4px;align-items:center;height:48px;padding:0 6px;max-width:100%;margin:0;overflow-x:auto;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:99px;box-shadow:0 8px 30px rgba(15,23,42,.08)}
+nav a{color:var(--mute);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:99px;white-space:nowrap}
+nav a.on{background:var(--ac2);color:var(--ac)}
+h1,h2,h3{font-family:var(--serif);font-weight:500;letter-spacing:-.01em;line-height:1.15;margin:0}
+h1{font-size:clamp(36px,5.6vw,58px);max-width:18em}h2{font-size:clamp(32px,5vw,44px);margin-bottom:8px}h3{font-size:26px;margin:56px 0 8px}
+p{margin:0 0 14px;max-width:68ch}.sub{color:var(--mute);font-size:19px;max-width:56ch}
+header{padding:72px 0 56px}header .sub{margin:20px 0 40px}
+.stats{display:flex;gap:40px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:24px}
+.stats div{font-family:var(--serif);font-size:38px;line-height:1}.stats span{display:block;font:14px var(--sans);color:var(--mute);margin-top:6px}
+section{padding:72px 0;border-top:1px solid var(--line)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:20px 0}
+.grid h4{margin:0 0 6px;font-size:16px}.grid p{font-size:15px;color:var(--mute);margin:0}
+.book{font-family:var(--serif);font-size:19px;line-height:1.3;border-left:3px solid var(--ac)}
+.fun div{display:flex;align-items:center;gap:12px;margin:8px 0;font-size:14px}.fun i{display:block;height:34px;background:var(--ac);border-radius:6px;color:#fff;font:600 15px/34px var(--sans);padding-left:12px;font-style:normal}
+.fun span{width:160px;color:var(--mute);flex:none}
+.tiles{display:flex;flex-wrap:wrap;gap:6px}.tiles em{font-style:normal;font-size:13px;background:var(--ac2);color:#1e40af;padding:3px 10px;border-radius:99px}
+.sec{margin:14px 0 4px;font-weight:600;font-size:14px}
+.ch{position:relative;margin:12px 0}.ch svg{width:100%;height:auto;display:block;overflow:visible}
+.tip{position:absolute;top:0;pointer-events:none;background:var(--ink);color:#fff;font-size:12px;padding:6px 10px;border-radius:8px;white-space:nowrap;display:none;transform:translateX(-50%)}
+.cap{font-size:13px;color:var(--mute)}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}th{color:var(--mute);font-weight:500}
+.sc{overflow-x:auto}.mt td{border:2px solid #fff;padding:6px 4px;font-size:12px;min-width:46px}.mt td.l{outline:3px solid #0f172a;outline-offset:-3px;font-weight:700}
+.tg button{font:13px var(--sans);border:1px solid var(--line);background:#fff;border-radius:99px;padding:4px 12px;margin:0 6px 6px 0;cursor:pointer}.tg button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+input[type=range]{width:100%;accent-color:var(--ac)}canvas{width:100%;cursor:grab;display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:700px){.two{grid-template-columns:1fr}.fun span{width:100px}}
+footer{padding:40px 0;color:var(--mute);font-size:13px;border-top:1px solid var(--line)}
+</style></head><body>
+<nav><div class="w"><a href="#idea">Ideation</a><a href="#testing">Testing</a><a href="#portfolio">Portfolio</a><a href="#live">Live</a></div></nav>
+<div class="w"><header><h1>How I built, tested, and deployed an algorithmic futures portfolio</h1>
+<p class="sub">by Oscar Strahle</p>
+<div class="stats"><div>5<span>algorithms</span></div><div>16<span>futures markets</span></div><div>20 yrs<span>backtested</span></div><div>3 months<span>live on sim capital</span></div></div></header>
+
+<section id="idea"><h2>Ideation</h2><p class="sub">Every algorithm started as a written hypothesis with exact entry and exit rules.</p>
+<h3>Ideas from books</h3><p>I read books on trading and investing from Robert Carver, Kevin J. Davey, Linda Bradford Raschke, and Ray Dalio.</p>
+<div class="grid"><div class="card book">How I Made $1,000,000 Trading Commodities Last Year</div><div class="card book">Advanced Futures Trading Strategies</div><div class="card book">Entry and Exit Confessions of a Champion Trader</div><div class="card book">Street Smarts: High Probability Short-Term Trading Strategies</div><div class="card book">Principles: Life and Work</div></div>
+<h3>Ideas from charts</h3><p>I studied historical charts across instruments, found something odd in the price action, then tested whether it was a repeatable pattern.</p>
+<div class="card" style="padding:8px"><img src="chart.png" alt="Daily gold futures candlestick chart" style="width:100%;height:auto;display:block;border-radius:8px"></div></section>
+
+<section id="testing"><h2>Testing</h2><p class="sub">Every hypothesis was put through tests designed to break it.</p>
+<div class="card fun" id="fun"></div>
+<h3>Data and assumptions</h3>
+<p>2006 to June 2026, daily data on 37 markets, using back-adjusted continuous contracts. Costs: $1 per micro contract or $2 per standard contract in commission, plus 2 ticks of slippage, per side.</p>
+<div class="card" id="mk"></div>
+<h3>In-sample and out-of-sample</h3>
+<p>I iterated on each idea using 2006-2019. When I was happy, I ran it once on 2020 to present to verify performance.</p>
+<div class="card"><div class="sec">Example: MB on Japanese Yen, equity (log scale, start = 100)</div><div class="ch" id="c-io"></div><div class="cap" id="io-n"></div></div>
+<h3>Parameter sensitivity</h3>
+<p>Initial parameters came from defaults, literature, and domain knowledge. I tested nearby values and looked for a broad plateau around my chosen value rather than sharp spikes.</p>
+<div class="card"><div class="sec">Example: VB on Micro Crude Oil. Drag to rotate.</div><canvas id="c3d" height="420"></canvas><div class="cap">Height shows relative net profit. Axes are anonymised.</div></div>
+<h3>Monte Carlo simulation</h3>
+<p>I resampled individual trades with replacement to see how much of the result was the order and mix of trades. The bold line is the real sequence; the faint lines are alternative histories.</p>
+<div class="card"><div class="sec">Example: LVD on Micro E-mini S&amp;P 500, <span id="mc-n"></span> resampled paths <button class="tg" id="mc-b" style="all:unset;color:var(--ac);cursor:pointer;margin-left:8px">Resample</button></div><div class="ch" id="c-mc"></div>
+<div class="two"><div id="h1"></div><div id="h2"></div></div><div class="cap">Dashed lines mark the 5th, 50th and 95th percentiles. The solid line is the real result.</div></div>
+<h3>Cross-market validation</h3>
+<p>I ran every algorithm on all 37 markets. I expected it to work across related markets; if it worked on the S&amp;P 500 but failed on the Nasdaq-100, that was a red flag. Working on unrelated markets, like corn and the Swiss franc, was even better, and meant I could run both side by side. One algorithm worked on all 37.</p></section>
+
+<section id="portfolio"><h2>Portfolio</h2><p class="sub">Five unique algorithms trading 16 markets.</p>
+<div class="grid" id="al"></div>
+<h3>Correlation</h3><p>Correlation of daily returns across the full 2006-2026 period.</p>
+<div class="card"><div id="cm"></div></div>
+<h3>Position sizing</h3>
+<p>The portfolio targets 10% annualised volatility. Realised volatility is the standard deviation of daily returns times √252, measured over the last 3 months. Position sizes are multiplied by target ÷ realised, reset monthly.</p>
+<div class="card"><div class="sec">Position multiplier at <span id="vv">10</span>% realised volatility: <span id="vm" style="color:var(--ac)">1.00×</span></div><input type="range" id="vs" min="3" max="30" step=".5" value="10"><div class="cap">Calm markets scale positions up; turbulent ones scale them down.</div></div>
+<h3>20-year backtest</h3>
+<p>The smooth curve and shallow drawdowns come from combining five uncorrelated algorithms across 16 different markets. Their losses rarely line up, so they largely cancel out at the portfolio level.</p>
+<div class="card"><div class="sec">Portfolio equity (log scale, start = 100) and drawdown</div><div class="ch" id="c-bt"></div><div class="ch" id="c-bd"></div><div class="sc" id="t-bt"></div></div></section>
+
+<section id="live"><h2>Results</h2><p class="sub">Three months live on sim capital, 1 July to 30 September 2026.</p>
+<div class="card"><div class="sec">Portfolio equity (log scale, start = 100) and drawdown</div><div class="tg" id="tg"></div><div class="ch" id="c-le"></div><div class="ch" id="c-ld"></div><div class="sc" id="t-lv"></div>
+<div class="cap">Annualised ratios from 3 months of data are indicative only. Individual algorithm columns show each algorithm’s contribution to the portfolio’s daily return.</div></div>
+<h3>Monthly and annual returns</h3><div class="card"><div class="sc" id="t-m"></div><div class="cap">Live months (Jul-Sep 2026) are outlined in black.</div></div>
+<h3>Live vs expected</h3><p id="vs-t"></p></section>
+<footer>Hypothetical backtest results and sim-capital live results. Not investment advice.</footer></div>
+<script src="data.js"></script>
+<script>
+const $=s=>document.querySelector(s),N='http://www.w3.org/2000/svg',P=(x,d=1)=>(x*100).toFixed(d)+'%',AC='#2563eb';
+const mk=(h,a,b)=>{const e=document.createElementNS(N,h);for(const k in a)e.setAttribute(k,a[k]);if(b!==undefined)e.textContent=b;return e};
+// nav spy
+const lk=[...document.querySelectorAll('nav a')];new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&lk.forEach(a=>a.classList.toggle('on',a.hash=='#'+e.target.id))),{rootMargin:'-40% 0px -55% 0px'}).observe&&document.querySelectorAll('section').forEach(s=>new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&lk.forEach(a=>a.classList.toggle('on',a.hash=='#'+e.target.id))),{rootMargin:'-40% 0px -55% 0px'}).observe(s));
+// funnel
+$('#fun').innerHTML=[['Ideas tested',27],['Passed in-sample',16],['Passed out-of-sample',10],['Passed robustness',6],['In the portfolio',5]].map(([n,v])=>`<div><span>${n}</span><i style="width:${v/27*100}%">${v}</i></div>`).join('');
+const S={'Bonds':['2 Year U.S. Treasury Notes','5 Yr U.S. Treasury Notes','10 Yr U.S. Treasury Notes','30 Yr U.S. Treasury Bonds'],'Currencies':['Euro FX','Swiss Franc','Japanese Yen','British Pound','Canadian Dollar','Australian Dollar','New Zealand Dollar'],'Crypto & indices':['Micro Bitcoin','Micro E-mini S&P 500','Micro E-mini Nasdaq-100','Micro E-mini Russell 2000','Micro E-mini Dow Jones','Nikkei 225','Volatility Index'],'Energy':['Micro Crude Oil','Natural Gas','RBOB Gasoline','Heating Oil'],'Metals':['Micro Gold','Micro Silver','Micro Copper','Micro Platinum'],'Agriculture':['Corn','Wheat','Soybeans','Cotton','Sugar','Cocoa','Coffee','Frozen Concentrated OJ','Live Cattle','Feeder Cattle','Lean Hogs']};
+$('#mk').innerHTML=Object.entries(S).map(([k,v])=>`<div class="sec">${k}</div><div class="tiles">${v.map(x=>`<em>${x}</em>`).join('')}</div>`).join('');
+const AL={LC2R:['Long/short mean reversion','Wheat, 2 Year U.S. Treasury Notes, Live Cattle'],LVD:['Long mean reversion','Micro E-mini S&P 500'],MAP:['Long trend following','Micro E-mini Nasdaq-100, Micro Bitcoin'],MB:['Short mean reversion','RBOB Gasoline, Japanese Yen'],VB:['Long/short momentum','Soybeans, Natural Gas, Micro E-mini Dow Jones, Micro Gold, Micro Crude Oil, Lean Hogs, Euro FX, Corn']};
+$('#al').innerHTML=Object.entries(AL).map(([k,v])=>`<div class="card"><h4>${k}</h4><p>${v[0]}</p><div class="tiles" style="margin-top:14px">${v[1].split(', ').map(x=>`<em>${x}</em>`).join('')}</div></div>`).join('');
+// line chart
+function chart(el,o){const W=900,H=o.h||300,m={l:52,r:10,t:10,b:24},n=o.d.length,vis=o.s.filter(s=>!s.hide),all=vis.flatMap(s=>s.v),lg=o.log,T=v=>lg?Math.log(v):v;
+let lo=Math.min(...all),hi=Math.max(...all);if(o.zero)hi=Math.max(hi,0);const a=T(lo),b=T(hi),pd=(b-a)*.04||1,y0=a-pd,y1=b+pd;
+const X=i=>m.l+i/(n-1)*(W-m.l-m.r),Y=v=>H-m.b-(T(v)-y0)/(y1-y0)*(H-m.t-m.b);
+const svg=mk('svg',{viewBox:`0 0 ${W} ${H}`});el.innerHTML='';
+let ticks=[];if(lg){for(let k=Math.floor(Math.log10(lo));k<=Math.ceil(Math.log10(hi));k++)[1,2,5].forEach(f=>{const t=f*10**k;if(t>=lo&&t<=hi)ticks.push(t)});if(ticks.length>7)ticks=ticks.filter(t=>/^1e?0*$/.test(String(t)[0]+(String(t).slice(1).replace(/0/g,'')))&&String(t)[0]=='1')}
+else{const st=[1,2,2.5,5,10].map(x=>x*10**Math.floor(Math.log10((hi-lo)/5||1))).find(x=>(hi-lo)/x<=6)||1;for(let t=Math.ceil(lo/st)*st;t<=hi;t+=st)ticks.push(t)}
+if(!ticks.length)ticks=[lo,hi];
+ticks.forEach(t=>{svg.append(mk('line',{x1:m.l,x2:W-m.r,y1:Y(t),y2:Y(t),stroke:'#e2e8f0'}),mk('text',{x:m.l-8,y:Y(t)+4,'text-anchor':'end','font-size':11,fill:'#64748b'},(o.yf||(v=>v))(t)))});
+const sp=(o.d[n-1].length>5&&(new Date(o.d[n-1])-new Date(o.d[0]))/864e5)||n;let last='';
+o.d.forEach((d,i)=>{const k=sp<400?d.slice(0,7):d.slice(0,4);if(k!=last&&(sp<400||(+d.slice(0,4))%Math.ceil(sp/365/9)==0||i==0)){svg.append(mk('text',{x:X(i),y:H-6,'text-anchor':'middle','font-size':11,fill:'#64748b'},sp<400?['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+d.slice(5,7)-1]:d.slice(0,4)))}last=k});
+if(o.split){const i=o.d.findIndex(d=>d>=o.split);svg.append(mk('rect',{x:X(i),y:m.t,width:W-m.r-X(i),height:H-m.t-m.b,fill:'#2563eb',opacity:.06}),mk('line',{x1:X(i),x2:X(i),y1:m.t,y2:H-m.b,stroke:AC,'stroke-dasharray':'4 3'}),mk('text',{x:X(i)-8,y:m.t+14,'text-anchor':'end','font-size':12,fill:'#64748b'},'In-sample'),mk('text',{x:X(i)+8,y:m.t+14,'font-size':12,fill:AC},'Out-of-sample'))}
+vis.forEach(s=>{const pts=s.v.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ');if(o.area)svg.append(mk('polygon',{points:`${X(0)},${Y(0)} ${pts} ${X(n-1)},${Y(0)}`,fill:s.c,opacity:.15}));svg.append(mk('polyline',{points:pts,fill:'none',stroke:s.c,'stroke-width':s.w||1.8,opacity:s.o||1,'stroke-linejoin':'round'}))});
+const cr=mk('line',{y1:m.t,y2:H-m.b,stroke:'#94a3b8',display:'none'}),tp=document.createElement('div');tp.className='tip';svg.append(cr);el.append(svg,tp);
+const show=i=>{if(i==null){cr.setAttribute('display','none');tp.style.display='none';return}cr.setAttribute('display','');cr.setAttribute('x1',X(i));cr.setAttribute('x2',X(i));tp.style.display='block';tp.style.left=X(i)/W*100+'%';
+tp.innerHTML=(o.lab?o.lab(i):o.d[i])+(o.notip?'':vis.map(s=>`<br><span style="color:${s.c=='#94a3b8'?'#cbd5e1':s.c=='#2563eb'?'#93c5fd':s.c}">●</span> ${s.n}: ${(o.tf||(v=>v.toFixed(1)))(s.v[i])}`).join(''))};
+(o.g=o.g||[]).push(show);svg.addEventListener('mousemove',e=>{const r=svg.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W,i=Math.max(0,Math.min(n-1,Math.round((x-m.l)/(W-m.l-m.r)*(n-1))));o.g.forEach(f=>f(i))});svg.addEventListener('mouseleave',()=>o.g.forEach(f=>f(null)))}
+// metrics table
+const MR=[['Total return','tot'],['CAGR','cagr'],['Annualised volatility','vol'],['Max drawdown','mdd'],['Sharpe','sharpe'],['Sortino','sortino'],['Calmar','calmar']];
+const fm=(k,v)=>['sharpe','sortino','calmar'].includes(k)?v.toFixed(2):k=='tot'?(v*100).toLocaleString('en',{maximumFractionDigits:1})+'%':P(v);
+const tbl=(cols)=>`<table><tr><th></th>${cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr>${MR.map(([n,k])=>`<tr><td>${n}</td>${cols.map(c=>`<td>${fm(k,c[1][k])}</td>`).join('')}</tr>`).join('')}</table>`;
+$('#t-bt').innerHTML=tbl([['Portfolio',D.bm]]);
+const AN=Object.keys(AL);$('#t-lv').innerHTML=tbl([...AN.map(a=>[a,D.algos[a].m]),['Portfolio',D.lm]]);
+// IS/OOS
+chart($('#c-io'),{d:D.io.d,s:[{n:'MB',v:D.io.e,c:AC}],log:1,split:'2020-01-01',h:300,yf:v=>v.toFixed(0)});
+$('#io-n').textContent=`Sharpe: ${D.iom.IS.sharpe.toFixed(2)} in-sample, ${D.iom.OOS.sharpe.toFixed(2)} out-of-sample. Out-of-sample performance held up.`;
+// backtest
+const g1=[];chart($('#c-bt'),{d:D.bt.d,s:[{n:'Portfolio',v:D.bt.e,c:AC}],log:1,g:g1,split:'2020-01-01',h:320,yf:v=>v.toLocaleString()});
+chart($('#c-bd'),{d:D.bt.d,s:[{n:'Drawdown',v:D.bt.dd,c:'#dc2626'}],g:g1,area:1,zero:1,h:160,yf:v=>v.toFixed(0)+'%',tf:v=>v.toFixed(2)+'%'});
+// live with toggles
+const g2=[],on={};let LS=()=>[{n:'Portfolio',v:D.live.e,c:AC,w:2.4},...AN.filter(a=>on[a]).map((a,i)=>({n:a,v:D.algos[a].e,c:['#0ea5e9','#64748b','#14b8a6','#a855f7','#f59e0b'][i%5],w:1.2}))];
+const drawL=()=>{g2.length=0;chart($('#c-le'),{d:D.live.d,s:LS(),log:1,g:g2,h:300,yf:v=>v.toFixed(0)});chart($('#c-ld'),{d:D.live.d,s:[{n:'Drawdown',v:D.live.dd,c:'#dc2626'}],g:g2,area:1,zero:1,h:150,yf:v=>v.toFixed(0)+'%',tf:v=>v.toFixed(2)+'%'})};
+$('#tg').innerHTML='<span class="cap">Show algorithms: </span>';AN.forEach(a=>{const b=document.createElement('button');b.textContent=a;b.onclick=()=>{on[a]=!on[a];b.classList.toggle('on');drawL()};$('#tg').append(b)});drawL();
+// monthly
+const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Year'],cl=v=>v==null?'':`background:${v>=0?`rgba(37,99,235,${Math.min(.8,.08+Math.abs(v)/8)})`:`rgba(220,38,38,${Math.min(.8,.08+Math.abs(v)/6)})`};color:${Math.abs(v)>4?'#fff':'#0f172a'}`;
+$('#t-m').innerHTML='<table class="mt"><tr><th></th>'+MO.map(m=>`<th>${m}</th>`).join('')+'</tr>'+Object.entries(D.monthly).map(([y,r])=>`<tr><td><b>${y}</b></td>${r.map((v,j)=>`<td class="${y==2026&&[6,7,8].includes(j)?'l':''}" style="${cl(v)};${j==12?'font-weight:600':''}">${v==null?'':v.toFixed(1)}</td>`).join('')}</tr>`).join('')+'</table>';
+// correlation
+const C=[[1,.009,-.003,-.008,-.01],[.009,1,.108,.007,-.016],[-.003,.108,1,.018,-.017],[-.008,.007,.018,1,-.021],[-.01,-.016,-.017,-.021,1]],O=['LC2R','LVD','MAP','MB','VB'];
+$('#cm').innerHTML='<table class="mt"><tr><th></th>'+O.map(o=>`<th>${o}</th>`).join('')+'</tr>'+C.map((r,i)=>`<tr><td><b>${O[i]}</b></td>${r.map((v,j)=>`<td style="text-align:center;font-size:14px;padding:16px 4px;background:rgba(37,99,235,${i==j?1:Math.abs(v)*2.5+.04});color:${i==j?'#fff':'#0f172a'}">${v.toFixed(3)}</td>`).join('')}</tr>`).join('')+'</table>';
+// vol widget
+$('#vs').oninput=e=>{$('#vv').textContent=e.target.value;$('#vm').textContent=(10/e.target.value).toFixed(2)+'×'};
+// monte carlo
+const rng=s=>()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const pc=(a,p)=>{const s=[...a].sort((x,y)=>x-y);return s[Math.floor(p*(s.length-1))]};
+function hist(el,vals,real,title,f){const W=430,H=190,m=40,mn=Math.min(...vals,real),mx=Math.max(...vals,real),B=28,c=Array(B).fill(0);vals.forEach(v=>c[Math.min(B-1,Math.floor((v-mn)/(mx-mn)*B))]++);const my=Math.max(...c),X=v=>m+(v-mn)/(mx-mn)*(W-m-8),s=mk('svg',{viewBox:`0 0 ${W} ${H}`});
+c.forEach((k,i)=>s.append(mk('rect',{x:m+i*(W-m-8)/B+1,y:H-26-k/my*(H-56),width:(W-m-8)/B-2,height:k/my*(H-56),fill:AC,opacity:.35,rx:2})));
+[[.05,'5%'],[.5,'50%'],[.95,'95%']].forEach(([p])=>s.append(mk('line',{x1:X(pc(vals,p)),x2:X(pc(vals,p)),y1:22,y2:H-26,stroke:AC,'stroke-dasharray':'4 3'}),mk('text',{x:X(pc(vals,p)),y:H-10,'text-anchor':'middle','font-size':11,fill:'#64748b'},f(pc(vals,p)))));
+s.append(mk('line',{x1:X(real),x2:X(real),y1:22,y2:H-26,stroke:'#0f172a','stroke-width':2}),mk('text',{x:m,y:14,'font-size':13,'font-weight':600,fill:'#0f172a'},title));el.innerHTML='';el.append(s)}
+const TR=D.mc,rl=[100];TR.forEach(r=>rl.push(rl[rl.length-1]*(1+r)));const dd=p=>{let k=p[0],d=0;p.forEach(v=>{k=Math.max(k,v);d=Math.min(d,v/k-1)});return d};
+let seed=7;const runMC=()=>{const R=rng(seed),F=[],M=[],fan=[];const NS=2000;for(let s=0;s<NS;s++){let e=100,k=100,d=0,p=s<150?[100]:null;for(let i=0;i<TR.length;i++){e*=1+TR[Math.floor(R()*TR.length)];k=Math.max(k,e);d=Math.min(d,e/k-1);p&&p.push(e)}F.push(e/100-1);M.push(d);p&&fan.push(p)}
+$('#mc-n').textContent=NS.toLocaleString();chart($('#c-mc'),{d:rl.map((_,i)=>i+''),s:[...fan.map(p=>({n:'',v:p,c:'#94a3b8',w:.8,o:.35})),{n:'Real',v:rl,c:AC,w:2.4}],log:1,notip:1,h:300,yf:v=>v.toFixed(0),lab:i=>'Trade '+i});
+hist($('#h1'),F,rl[rl.length-1]/100-1,'Final return',v=>P(v,0));hist($('#h2'),M,dd(rl),'Max drawdown',v=>P(v,0))};
+$('#mc-b').onclick=()=>{seed++;runMC()};runMC();
+// 3D surface
+(function(){const cv=$('#c3d'),x=cv.getContext('2d'),r=devicePixelRatio||1,A=[...new Set(D.ps.map(p=>p[0]))].sort((a,b)=>a-b),B=[...new Set(D.ps.map(p=>p[1]))].sort((a,b)=>a-b),Z=A.map(a=>B.map(b=>(D.ps.find(p=>p[0]==a&&p[1]==b)||[0,0,0])[2])),zn=Math.min(...Z.flat()),zx=Math.max(...Z.flat());let az=-.7,el=.55;
+function draw(){const W=cv.clientWidth,H=420;cv.width=W*r;cv.height=H*r;x.setTransform(r,0,0,r,0,0);x.clearRect(0,0,W,H);const S=Math.min(W,760)/2.9,pt=(i,j)=>{const u=(i/(A.length-1)-.5)*2,v=(j/(B.length-1)-.5)*2,z=((Z[i][j]-zn)/(zx-zn)-.5)*1.3,xr=u*Math.cos(az)-v*Math.sin(az),yr=u*Math.sin(az)+v*Math.cos(az);return[W/2+xr*S,H/2+(-z*Math.cos(el)+yr*Math.sin(el))*S*.9+10,yr]};
+const q=[];for(let i=0;i<A.length-1;i++)for(let j=0;j<B.length-1;j++){const p=[pt(i,j),pt(i+1,j),pt(i+1,j+1),pt(i,j+1)],z=(Z[i][j]+Z[i+1][j]+Z[i+1][j+1]+Z[i][j+1])/4;q.push([p,(z-zn)/(zx-zn),p.reduce((s,a)=>s+a[2],0)])}
+q.sort((a,b)=>a[2]-b[2]).forEach(([p,t])=>{x.beginPath();p.forEach((a,k)=>k?x.lineTo(a[0],a[1]):x.moveTo(a[0],a[1]));x.closePath();x.fillStyle=`rgb(${219-t*182|0},${234-t*135|0},${254-t*19|0})`;x.fill();x.strokeStyle='rgba(255,255,255,.7)';x.stroke()});
+x.fillStyle='#64748b';x.font='12px Inter,sans-serif';const a=pt(A.length-1,0),b=pt(0,B.length-1);x.fillText('Parameter A',a[0]-20,a[1]+22);x.fillText('Parameter B',b[0]-20,b[1]+22)}
+let dn=0,lx=0,ly=0;cv.onpointerdown=e=>{dn=1;lx=e.clientX;ly=e.clientY;cv.setPointerCapture(e.pointerId)};cv.onpointerup=()=>dn=0;cv.onpointermove=e=>{if(!dn)return;az+=(e.clientX-lx)*.01;el=Math.max(.15,Math.min(1.4,el+(e.clientY-ly)*.008));lx=e.clientX;ly=e.clientY;draw()};addEventListener('resize',draw);draw()})();
+// live vs expected
+const X=D.exp;$('#vs-t').textContent=`The backtest’s ${P(D.bm.cagr)} CAGR implies roughly ${P(X.exp)} over ${X.days} trading days. The live portfolio returned ${P(X.live)}. Across every rolling ${X.days}-day window in the backtest, the middle 80% of outcomes ran from ${P(X.p10)} to ${P(X.p90)}, and the live result beat ${X.pct.toFixed(0)}% of them. Almost all of the live return came from VB; the other four were slightly negative or flat, as expected over so short a window.`;
+</script></body></html>
